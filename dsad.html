@@ -1,0 +1,983 @@
+
+
+
+
+<script src="/Scripts/jquery-1.7.1.min.js"></script>
+<script src="/Scripts/jquery-ui-1.8.20.min.js"></script>
+<script src="/Scripts/jquery.signalR-2.2.0.js"></script>
+<script src="/signalr/hubs"></script>
+
+<link href="/Content/PriceList.min.css?v=5.2" rel="stylesheet" />
+<script src="/Scripts/Highchart/highcharts.js"></script>
+<script src="/Scripts/Highchart/themes/dark-unica.js"></script>
+<script src="/Scripts/ComboCheckList/jquery.multiple.select_new.js"></script>
+<link href="/Scripts/ComboCheckList/multiple-select.css" rel="stylesheet" />
+
+<input type="hidden" id="txtTimeMissing" value="2" />
+<input type="hidden" id="txtTimeSetWidth" value="20000" />
+<input type="hidden" id="txtTimeDrawChart" value="9500" />
+<input type="hidden" id="txtLinkStockInfo" value="https://hnx.vn/cophieu-etfs/chi-tiet-chung-khoan-type-stock.html" />
+<input type="hidden" id="txtNameIndexTop" value="NY|UP" />
+<input type="hidden" id="txtNameNyUP" value="Cổ phiếu Ni&#234;m yết|Cổ phiếu Upcom|Tr&#225;i phiếu doanh nghiệp" />
+<div id="wrapper" class="vi-VN">
+
+    <div id="dv_header">
+        <div id="dv_left">
+            <a onclick="GoHome()">
+                <img src="/Content/img/BangGia_home.png" />
+            </a>
+        </div>
+        <div id="dv_middle">
+            <marquee id="marquee" onmouseover="this.stop()" onmouseout="this.start()" scrollamount="5" direction="left" width="100%" align="center">
+                <p id="NY_all">
+                    <span>CP NI&#202;M YẾT: Tổng KLGD:</span>
+                    <span id="NY_TOTALQTTY">0</span>
+                    <span class="clsPadLeft">Tổng GTGD:</span>
+                    <span id="NY_TOTALVALUE">0</span>
+                    <span class="clsPadLeft">KLGD thỏa thuận:</span>
+                    <span id="NY_PTTOTALQTTY">0</span>
+                    <span class="clsPadLeft">GTGD thỏa thuận:</span>
+                    <span id="NY_PTTOTALVALUE">0</span>
+
+                    <span style="padding-left: 100px">CP UPCOM: Tổng KLGD:</span>
+                    <span id="UP_TOTALQTTY">0</span>
+                    <span class="clsPadLeft">Tổng GTGD:</span>
+                    <span id="UP_TOTALVALUE">0</span>
+                    <span class="clsPadLeft">KLGD thỏa thuận:</span>
+                    <span id="UP_PTTOTALQTTY">0</span>
+                    <span class="clsPadLeft">GTGD thỏa thuận:</span>
+                    <span id="UP_PTTOTALVALUE">0</span>
+
+                    <span style="padding-left: 100px">TPDN: Tổng KLGD:</span>
+                    <span id="BOND_TOTALQTTY">0</span>
+                    <span class="clsPadLeft">Tổng GTGD:</span>
+                    <span id="BOND_TOTALVALUE">0</span>
+                    <span class="clsPadLeft">KLGD thỏa thuận:</span>
+                    <span id="BOND_PTTOTALQTTY">0</span>
+                    <span class="clsPadLeft">GTGD thỏa thuận:</span>
+                    <span id="BOND_PTTOTALVALUE">0</span>
+                </p>
+            </marquee>
+        </div>
+        <div id="dv_right">
+            <div id="sub_r_status">
+                | ĐANG GIAO DỊCH
+            </div>
+            <div id="sub_r_time">
+                Ng&#224;y
+                <div id="dv_time"></div>
+            </div>
+            <div>
+                <a href="/Home/Language?culture=en-GB&returnUrl=Home/Index" class="lang-en">
+                    <img src="/Content/img/en.png" />
+                </a>
+                <input type="hidden" id="txtLanguage" value="1" />
+                <input type="hidden" id="txtValueLanguage" value="Vi" />
+            </div>
+        </div>
+    </div>
+    <div id="dv_index">
+        <div id="dv_general">
+            <div id="dv_fix_header">
+                <div id="dv_wrap_chart">
+                    <div id="draw_chart" class="clssAutoMargin">
+                        <div id="dv_HNXINDEX_index" class="wp-draw-chart">
+                            <div id="HNXINDEX_chart" class="dv-draw-chart">
+                            </div>
+                            <div id="HNXINDEX_info" class="dv-info">
+                            </div>
+                        </div>
+                        <div id="dv_HNXUPCOMINDEX_index" class="wp-draw-chart">
+                            <div id="HNXUPCOMINDEX_chart" class="dv-draw-chart">
+                            </div>
+                            <div id="HNXUPCOMINDEX_info" class="dv-info">
+                            </div>
+                        </div>
+                        <div id="dv_VN30_index" class="wp-draw-chart">
+                            <div id="VN30_chart" class="dv-draw-chart">
+                            </div>
+                            <div id="VN30_info" class="dv-info">
+                            </div>
+                        </div>
+
+
+
+
+
+
+
+                        <div id="dv_more_index" class="wp-draw-chart">
+                            <div id="MORE_chart" class="dv-draw-chart">
+                                &nbsp;
+                            </div>
+                            <div id="MORE_info" class="dv-info">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="dv_information">
+                    <div id="HNX30" class="clsDadIndex" onclick="ChangeChart(&#39;HNX30&#39;,4, &#39;HNX30&#39;, &#39;HNX30&#39;)">
+                        <div class="clsSubIndex">
+                            <span>
+                                HNX30
+                            </span>
+                            <span class="color_up item_color HNX30_index">195.44</span>
+                            <span class="color_up item_color icon HNX30_icon">▲</span>
+                            <span class="color_up item_color HNX30_indexChange">1.21</span>
+                            <span>(</span>
+                            <span class="color_up item_color HNX30_pctChange">0.62</span>
+                            <span>%)</span>
+                        </div>
+                    </div>
+                    <div id="HNXMSCAP" class="clsDadIndex" onclick="ChangeChart(&#39;HNXMSCAP&#39;,5, &#39;Mid/Small&#39;, &#39;Mid/Small&#39;)">
+                        <div class="clsSubIndex">
+                            <span>
+                                Mid/Small
+                            </span>
+                            <span class="color_up item_color HNXMSCAP_index">153.13</span>
+                            <span class="color_up item_color icon HNXMSCAP_icon">▲</span>
+                            <span class="color_up item_color HNXMSCAP_indexChange">1.23</span>
+                            <span>(</span>
+                            <span class="color_up item_color HNXMSCAP_pctChange">0.81</span>
+                            <span>%)</span>
+                        </div>
+                    </div>
+                    <div id="HNXFIN" class="clsDadIndex" onclick="ChangeChart(&#39;HNXFIN&#39;,6, &#39;T&#224;i ch&#237;nh &#39;, &#39;Finance&#39;)">
+                        <div class="clsSubIndex">
+                            <span>
+                                T&#224;i ch&#237;nh
+                            </span>
+                            <span class="color_up item_color HNXFIN_index">180.28</span>
+                            <span class="color_up item_color icon HNXFIN_icon">▲</span>
+                            <span class="color_up item_color HNXFIN_indexChange">0.82</span>
+                            <span>(</span>
+                            <span class="color_up item_color HNXFIN_pctChange">0.46</span>
+                            <span>%)</span>
+                        </div>
+                    </div>
+                    <div id="HNXCON" class="clsDadIndex" onclick="ChangeChart(&#39;HNXCON&#39;,7, &#39;X&#226;y dựng&#39;, &#39;Construction&#39;)">
+                        <div class="clsSubIndex">
+                            <span>
+                                X&#226;y dựng
+                            </span>
+                            <span class="color_up item_color HNXCON_index">128.43</span>
+                            <span class="color_up item_color icon HNXCON_icon">▲</span>
+                            <span class="color_up item_color HNXCON_indexChange">0.99</span>
+                            <span>(</span>
+                            <span class="color_up item_color HNXCON_pctChange">0.78</span>
+                            <span>%)</span>
+                        </div>
+                    </div>
+                    <div id="HNX30TRI" class="clsDadIndex" onclick="ChangeChart(&#39;HNX30TRI&#39;,8, &#39;HNX30TRI&#39;, &#39;HNX30TRI&#39;)">
+                        <div class="clsSubIndex">
+                            <span>
+                                HNX30TRI
+                            </span>
+                            <span class="color_normal item_color HNX30TRI_index">253.19</span>
+                            <span class="color_normal item_color icon HNX30TRI_icon">■</span>
+                            <span class="color_normal item_color HNX30TRI_indexChange">0.00</span>
+                            <span>(</span>
+                            <span class="color_normal item_color HNX30TRI_pctChange">0.00</span>
+                            <span>%)</span>
+                        </div>
+                    </div>
+                    <div id="HNXMAN" class="clsDadIndex" onclick="ChangeChart(&#39;HNXMAN&#39;,9, &#39;C&#244;ng nghiệp&#39;, &#39;Manufacture&#39;)">
+                        <div class="clsSubIndex">
+                            <span>
+                                C&#244;ng nghiệp
+                            </span>
+                            <span class="color_up item_color HNXMAN_index">187.05</span>
+                            <span class="color_up item_color icon HNXMAN_icon">▲</span>
+                            <span class="color_up item_color HNXMAN_indexChange">0.71</span>
+                            <span>(</span>
+                            <span class="color_up item_color HNXMAN_pctChange">0.38</span>
+                            <span>%)</span>
+                        </div>
+                    </div>
+                    <div id="HNXLCAP" class="clsDadIndex" onclick="ChangeChart(&#39;HNXLCAP&#39;,10, &#39;Large&#39;, &#39;Large&#39;)">
+                        <div class="clsSubIndex">
+                            <span>
+                                Large
+                            </span>
+                            <span class="color_up item_color HNXLCAP_index">162.55</span>
+                            <span class="color_up item_color icon HNXLCAP_icon">▲</span>
+                            <span class="color_up item_color HNXLCAP_indexChange">0.68</span>
+                            <span>(</span>
+                            <span class="color_up item_color HNXLCAP_pctChange">0.42</span>
+                            <span>%)</span>
+                        </div>
+                    </div>
+                    <div id="UPCOMSMALLINDEX" class="clsDadIndex" onclick="ChangeChart(&#39;UPCOMSMALLINDEX&#39;,11, &#39;UPCOM Small Index&#39;, &#39;UPCOM Small Index&#39;)">
+                        <div class="clsSubIndex">
+                            <span>
+                                UPCOM Small Index
+                            </span>
+                            <span class="color_up item_color UPCOMSMALLINDEX_index">103.28</span>
+                            <span class="color_up item_color icon UPCOMSMALLINDEX_icon">▲</span>
+                            <span class="color_up item_color UPCOMSMALLINDEX_indexChange">0.04</span>
+                            <span>(</span>
+                            <span class="color_up item_color UPCOMSMALLINDEX_pctChange">0.04</span>
+                            <span>%)</span>
+                        </div>
+                    </div>
+                    <div id="UPCOMMEDIUMINDEX" class="clsDadIndex" onclick="ChangeChart(&#39;UPCOMMEDIUMINDEX&#39;,12, &#39;UPCOM Medium Index&#39;, &#39;UPCOM Medium Index&#39;)">
+                        <div class="clsSubIndex">
+                            <span>
+                                UPCOM Medium Index
+                            </span>
+                            <span class="color_down item_color UPCOMMEDIUMINDEX_index">120.84</span>
+                            <span class="color_down item_color icon UPCOMMEDIUMINDEX_icon">▼</span>
+                            <span class="color_down item_color UPCOMMEDIUMINDEX_indexChange">-0.26</span>
+                            <span>(</span>
+                            <span class="color_down item_color UPCOMMEDIUMINDEX_pctChange">-0.22</span>
+                            <span>%)</span>
+                        </div>
+                    </div>
+                    <div id="UPCOMLARGEINDEX" class="clsDadIndex" onclick="ChangeChart(&#39;UPCOMLARGEINDEX&#39;,13, &#39;UPCOM Large Index&#39;, &#39;UPCOM Large Index&#39;)">
+                        <div class="clsSubIndex">
+                            <span>
+                                UPCOM Large Index
+                            </span>
+                            <span class="color_up item_color UPCOMLARGEINDEX_index">89.58</span>
+                            <span class="color_up item_color icon UPCOMLARGEINDEX_icon">▲</span>
+                            <span class="color_up item_color UPCOMLARGEINDEX_indexChange">0.63</span>
+                            <span>(</span>
+                            <span class="color_up item_color UPCOMLARGEINDEX_pctChange">0.70</span>
+                            <span>%)</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="dv_menu">
+                <div id="TOP" class="item_menu">
+                    <div class="context_menu">
+                        <div class="context">
+                            <div id="lbl_top_menu" class="dv_lbl_context" onclick="DefaultSelectTop()">Top</div>
+                            <ul class="clsMenuTOPVi">
+                                <li onclick="ChangeTabBG(&#39;TOP&#39;, 0, &#39;NY&#39;)">
+                                    <a href="javascript:;">
+                                        <img src="/Content/img/BangGia_Tang.png" />NY. Top cp tăng gi&#225; mạnh nhất
+                                    </a>
+                                </li>
+                                <li onclick="ChangeTabBG(&#39;TOP&#39;, 1, &#39;UP&#39;)">
+                                    <a href="javascript:;">
+                                        <img src="/Content/img/BangGia_Tang.png" />UP. Top cp tăng gi&#225; mạnh nhất
+                                    </a>
+                                </li>
+                                <li onclick="ChangeTabBG(&#39;TOP&#39;, 2, &#39;NY&#39;)">
+                                    <a href="javascript:;">
+                                        <img src="/Content/img/BangGia_Giam.png" />NY. Top cp giảm gi&#225; mạnh nhất
+                                    </a>
+                                </li>
+                                <li onclick="ChangeTabBG(&#39;TOP&#39;, 3, &#39;UP&#39;)">
+                                    <a href="javascript:;">
+                                        <img src="/Content/img/BangGia_Giam.png" />UP. Top cp giảm gi&#225; mạnh nhất
+                                    </a>
+                                </li>
+                                <li onclick="ChangeTabBG(&#39;TOP&#39;, 4, &#39;NY&#39;)">
+                                    <a href="javascript:;">
+                                        <img src="/Content/img/BangGia_GD.png" />NY. Top cp giao dịch nhiều nhất
+                                    </a>
+                                </li>
+                                <li onclick="ChangeTabBG(&#39;TOP&#39;, 5, &#39;UP&#39;)">
+                                    <a href="javascript:;">
+                                        <img src="/Content/img/BangGia_GD.png" />UP. Top cp giao dịch nhiều nhất
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="NY" class="item_menu">
+                    <div class="context_menu">
+                        <div class="context">
+                            <div id="lb_ny" class="dv_lbl_context" onclick="DefaultSelectNY()">Cổ phiếu Ni&#234;m yết</div>
+                            <ul class="clsMenuNormal">
+                                <li onclick="ChangeTabBG(&#39;NY&#39;, &#39;ABC&#39;, &#39;LIS&#39;, &#39;Cổ phiếu Ni&#234;m yết&#39;, &#39;LISTED STOCK&#39;)"><a id="liNY_LIS" href="javascript:;">To&#224;n thị trường</a></li>
+                                <li onclick="ChangeTabBG(&#39;NY&#39;, &#39;ABC&#39;, &#39;HNXINDEX&#39;, &#39;HNXINDEX&#39;, &#39;HNXINDEX&#39;)"><a id="liNY_HNX" href="javascript:;">HNXIndex</a></li>
+                                <li onclick="ChangeTabBG(&#39;NY&#39;, &#39;ABC&#39;, &#39;HNX30&#39;, &#39;HNX30&#39;, &#39;HNX30&#39;)"><a id="liNY_HNX30" href="javascript:;">HNX30</a></li>
+                                <li onclick="ChangeTabBG('NY', 'DEAL_NY', 'DEAL_NY', 'GD THỎA THUẬN', 'NEGOTIATION')"><a id="liNY_DEAL_NY" href="javascript:;">GD thỏa thuận</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="UP" class="item_menu">
+                    <div class="context_menu">
+                        <div class="context">
+                            <div id="lb_up" class="dv_lbl_context" onclick="DefaultSelectUP()">Cổ phiếu Upcom</div>
+                            <ul class="clsMenuNormal">
+                                <li onclick="ChangeTabBG(&#39;UP&#39;, &#39;ABC&#39;, &#39;UPC&#39;, &#39;Cổ phiếu UPCOM&#39;, &#39;UPCOM&#39;)"><a id="liUP_UPC" href="javascript:;">To&#224;n thị trường</a></li>
+                                <li onclick="ChangeTabBG(&#39;UP&#39;, &#39;ABC&#39;, &#39;HNXUPCOMINDEX&#39;, &#39;UPCOM INDEX&#39;, &#39;UPCOM INDEX&#39;)"><a id="liUP_UP" href="javascript:;">Upcom Index</a></li>
+
+                                <li onclick="ChangeTabBG(&#39;UP&#39;, &#39;ABC&#39;, &#39;U_LARGE&#39;, &#39;UPCoM Large&#39;, &#39;UPCoM Large&#39;)"><a id="liUP_Tab1" href="javascript:;">UPCoM Large</a></li>
+                                <li onclick="ChangeTabBG(&#39;UP&#39;, &#39;ABC&#39;, &#39;U_MEDIUM&#39;, &#39;UPCoM Medium&#39;, &#39;UPCoM Medium&#39;)"><a id="liUP_Tab2" href="javascript:;">UPCoM Medium</a></li>
+                                <li onclick="ChangeTabBG(&#39;UP&#39;, &#39;ABC&#39;, &#39;U_SMALL&#39;, &#39;UPCoM Small&#39;, &#39;UPCoM Small&#39;)"><a id="liUP_Tab3" href="javascript:;">UPCoM Small</a></li>
+                                <li onclick="ChangeTabBG('UP', 'DEAL_UP', 'DEAL_UP', 'GD THỎA THUẬN', 'NEGOTIATION')"><a id="liUP_DEAL_UP" href="javascript:;">GD thỏa thuận</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="ETF" class="item_menu">
+                    <div class="context_menu">
+                        <div class="context">
+                            <div id="lb_etf" class="dv_lbl_context" onclick="DefaultSelectETF()">ETF</div>
+                            <ul class="clsMenuNormal">
+                                <li onclick="ChangeTabBG(&#39;ETF&#39;, &#39;ETF&#39;, &#39;ETF&#39;, &#39;ETF&#39;, &#39;ETF&#39;)"><a id="liETF_ETF" href="javascript:;">To&#224;n thị trường</a></li>
+                                <li onclick="ChangeTabBG('ETF', 'DEAL_ETF', 'DEAL_ETF', 'GD THỎA THUẬN', 'NEGOTIATION')"><a id="liETF_DEAL_ETF" href="javascript:;">GD thỏa thuận</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="BOND" class="item_menu">
+                    <div class="context_menu">
+                        <div class="context">
+                            <div id="lb_bond" class="dv_lbl_context" onclick="DefaultSelectBOND()">Tr&#225;i phiếu doanh nghiệp</div>
+                            <ul class="clsMenuNormal">
+                                <li onclick="ChangeTabBG(&#39;BOND&#39;, &#39;BOND&#39;, &#39;BOND&#39;, &#39;Tr&#225;i phiếu doanh nghiệp&#39;, &#39;Corporate Bond&#39;)"><a id="liBOND_BOND" href="javascript:;">To&#224;n thị trường</a></li>
+                                <li onclick="ChangeTabBG('BOND', 'DEAL_BOND', 'DEAL_BOND', 'GD THỎA THUẬN', 'NEGOTIATION')"><a id="liBOND_DEAL_BOND" href="javascript:;">GD thỏa thuận</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+
+
+                <div id="PS" class="item_menu" onclick="DefaultSelectPS()">CK Ph&#225;i Sinh</div>
+
+                <div id="FAV" class="item_menu" onclick="ChangeTabBG(this.id)">T&#249;y chọn</div>
+
+                <div id="dv_search" class="item_menu_sp hidden_row">
+                    <input type="text" id="txtSearch" placeholder="Nhập m&#227; chứng kho&#225;n" />
+                    <div class="dv_img_search">
+                        <img src="/Content/img/BangGia_cong.png" onclick="AddOrRemoveFAV()" />
+                    </div>
+                </div>
+
+                <div id="dv_hide_index">
+                    <img id="img_hideshow" src="/Content/img/BangGia_len.png" class="hide" onclick="HideShow()" />
+                </div>
+            </div>
+            <div id="dv_line"></div>
+            <div id="dv_classify" class="hidden_row sub_menu">
+                <div id="ABC" onclick="FuncSelectAreas(this.id)">
+                    <p>ABC</p>
+                </div>
+                <div id="DEF" onclick="FuncSelectAreas(this.id)">
+                    <p>DEF</p>
+                </div>
+                <div id="GHI" onclick="FuncSelectAreas(this.id)">
+                    <p>GHI</p>
+                </div>
+                <div id="JKL" onclick="FuncSelectAreas(this.id)">
+                    <p>JKL</p>
+                </div>
+                <div id="MNO" onclick="FuncSelectAreas(this.id)">
+                    <p>MNO</p>
+                </div>
+                <div id="PQR" onclick="FuncSelectAreas(this.id)">
+                    <p>PQR</p>
+                </div>
+                <div id="STUV" onclick="FuncSelectAreas(this.id)">
+                    <p>STUV</p>
+                </div>
+                <div id="WXYZ" onclick="FuncSelectAreas(this.id)">
+                    <p>WXYZ</p>
+                </div>
+            </div>
+
+
+            <div id="dv_derivative" class="hidden_row sub-menu-derivative ">
+                <div id="derivative_total" onclick="ChangeTabBG('PS', 'TOTAL', 'derivative_total')">
+                    <p>Tổng hợp</p>
+                </div>
+                <div id="derivative_details" onclick="ChangeTabBG('PS', 'DETAILS', 'derivative_details')">
+                    <p>Chi tiết</p>
+                </div>
+                <div id="derivative_deal" class="clsMenuODWidthVi" onclick="ChangeTabBG('PS', 'DEAL_PS', 'derivative_deal')">
+                    <p>GD thỏa thuận</p>
+                </div>
+                <div id="dv_title_details" class="hidden_row">
+                    <span>Tổng số m&#227; hợp đồng giao dịch:</span><span id="sp_title_details"></span>
+                </div>
+            </div>
+
+        </div>
+    </div>
+    <div id="dv_bg">
+
+        <div id="dv_table">
+            <table id="table_header" class="table_bg cls_header " cellpadding="2" cellspacing="0">
+                <thead>
+                <tr>
+                    <td rowspan="2" class="cl_favOL" style="width: 1%;">TT</td>
+                    <td rowspan="2" class="td_header">CK</td>
+                    <td rowspan="2" class="td_header cl_not_etf ">Trạng thái GD</td>
+                    <td rowspan="2" class="td_header cl_not_etf cl_not_bond">Trạng thái THQ</td>
+                    <td rowspan="2" class="td_header cl_not_bond">TC</td>
+                    <td rowspan="2" class="td_header cl_not_bond">Trần</td>
+                    <td rowspan="2" class="td_header cl_not_bond">S&#224;n</td>
+                    <td colspan="6" class="clsMiddleHeader">Dư mua</td>
+                    <td colspan="5" class="clsMiddleHeader">Khớp lệnh</td>
+                    <td colspan="6" class="clsMiddleHeader">Dư b&#225;n</td>
+                    <td rowspan="2" class="td_header cl_etf">Mở<br />cửa</td>
+                    <td rowspan="2" class="td_header cl_etf">Đóng<br />cửa</td>
+                    <td rowspan="2" class="td_header">Cao<br/>nhất</td>
+                    <td rowspan="2" class="td_header">Thấp<br />nhất</td>
+                    <td rowspan="2" class="td_header cl_not_etf cl_not_up cl_not_fav">Giá<br />TB</td>
+                    <td rowspan="2" class="td_header cl_not_etf cl_not_ny cl_not_bond cl_not_fav">Giá<br />BQ</td>
+                    <td rowspan="2" class="td_header cl_not_etf cl_not_up cl_not_ny cl_not_bond">Giá<br />TB/BQ</td>
+                    <td rowspan="2" class="cl_etf">iNAV</td>
+                    <td rowspan="2" class="cl_etf">Chỉ số<br />CS</td>
+                    <td rowspan="2" class="td_header">NN<br />mua</td>
+                    <td rowspan="2" class="td_header">NN<br />bán</td>
+                </tr>
+                <tr class="tr-nowrap">
+                    <td class="td_header">KL3</td>
+                    <td class="td_header">Gi&#225; 3</td>
+                    <td class="td_header">KL2</td>
+                    <td class="td_header">Gi&#225; 2</td>
+                    <td class="td_header">KL1</td>
+                    <td class="td_header">Gi&#225; 1</td>
+
+                    <td class="td_header">+/-</td>
+                    <td class="td_header">Giá</td>
+                    <td class="td_header">KL</td>
+                    <td class="td_header">Tổng KL</td>
+                    <td class="td_header">Tổng GT</td>
+
+                    <td class="td_header">Gi&#225; 1</td>
+                    <td class="td_header">KL1</td>
+                    <td class="td_header">Gi&#225; 2</td>
+                    <td class="td_header">KL2</td>
+                    <td class="td_header">Gi&#225; 3</td>
+                    <td class="td_header">KL3</td>
+                </tr>
+                </thead>
+            </table>
+
+            <div id="dv_table_price">
+                <table id="tb_price" class="table_bg " cellpadding="2" cellspacing="0">
+                    <thead>
+                    <tr>
+                        <td rowspan="2" class="cl_favOL" style="width: 1%;">TT</td>
+                        <td rowspan="2" class="td_header clsWidthPrice">CK</td>
+                        <td rowspan="2" class="td_header cl_not_etf clsWidthPrice">Trạng thái GD</td>
+                        <td rowspan="2" class="td_header cl_not_etf cl_not_bond clsWidthPrice">Trạng thái THQ</td>
+                        <td rowspan="2" class="td_header cl_not_bond clsWidthPrice">TC</td>
+                        <td rowspan="2" class="td_header cl_not_bond clsWidthPrice">Trần</td>
+                        <td rowspan="2" class="td_header cl_not_bond clsWidthPrice">S&#224;n</td>
+                        <td colspan="6" class="clsMiddleHeader">Dư mua</td>
+                        <td colspan="5" class="clsMiddleHeader">Khớp lệnh</td>
+                        <td colspan="6" class="clsMiddleHeader">Dư b&#225;n</td>
+                        <td rowspan="2" class="td_header cl_etf">Mở<br />cửa</td>
+                        <td rowspan="2" class="td_header cl_etf">Đóng<br />cửa</td>
+                        <td rowspan="2" class="td_header">Cao<br/>nhất</td>
+                        <td rowspan="2" class="td_header">Thấp<br />nhất</td>
+                        <td rowspan="2" class="td_header cl_not_etf cl_not_up cl_not_fav clsWidthPrice">Giá<br />TB</td>
+                        <td rowspan="2" class="td_header cl_not_etf cl_not_ny cl_not_bond cl_not_fav clsWidthPrice">Giá<br />BQ</td>
+                        <td rowspan="2" class="td_header cl_not_etf cl_not_up cl_not_ny cl_not_bond clsWidthPrice">Giá<br />TB/BQ</td>
+                        <td rowspan="2" class="cl_etf clsWidthPrice">iNAV</td>
+                        <td rowspan="2" class="cl_etf">Chỉ số<br />CS</td>
+                        <td rowspan="2" class="td_header clsWidthPrice">NN<br />mua</td>
+                        <td rowspan="2" class="td_header clsWidthPrice">NN<br />bán</td>
+                    </tr>
+                    <tr class="tr-nowrap">
+                        <td class="td_header clsWidthQTTY">KL3</td>
+                        <td class="td_header clsWidthPrice">Gi&#225; 3</td>
+                        <td class="td_header clsWidthQTTY">KL2</td>
+                        <td class="td_header clsWidthPrice">Gi&#225; 2</td>
+                        <td class="td_header clsWidthQTTY">KL1</td>
+                        <td class="td_header clsWidthPrice">Gi&#225; 1</td>
+                        <td class="td_header clsWidthPrice">+/-</td>
+                        <td class="td_header clsWidthPrice">Giá</td>
+                        <td class="td_header clsWidthPrice">KL</td>
+                        <td class="td_header clsWidthQTTY">Tổng KL</td>
+                        <td class="td_header clsWidthQTTY">Tổng GT</td>
+                        <td class="td_header clsWidthPrice">Gi&#225; 1</td>
+                        <td class="td_header clsWidthQTTY">KL1</td>
+                        <td class="td_header clsWidthPrice">Gi&#225; 2</td>
+                        <td class="td_header clsWidthQTTY">KL2</td>
+                        <td class="td_header clsWidthPrice">Gi&#225; 3</td>
+                        <td class="td_header clsWidthQTTY">KL3</td>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div id="dv_odersdeal" class="hidden_row" style="overflow-y: auto;">
+            <div id="dv_totalPT">
+                <p class="pCenter">
+                    <label class="clsUpper">Tổng khối lượng giao dịch thỏa thuận:</label>
+                    <label id="PT_TotalQTYY"></label>
+                    <label class="space">-</label>
+                    <label class="clsUpper">Tổng gi&#225; trị giao dịch thỏa thuận:</label>
+                    <label id="PT_TotalValue"></label>
+                </p>
+            </div>
+            <div id="header_odersdeal">
+                <div id="content_header_od">
+                    <div class="item_odersdeal ">
+                        <table id="header_buy" class="item_sub" cellpadding="2" cellspacing="0">
+                            <thead>
+                            <tr>
+                                <td colspan="4" class="clsMiddleHeader">Ch&#224;o mua</td>
+                            </tr>
+                            <tr>
+                                <td class="clsMiddleHeader">Mã CK</td>
+                                <td class="clsMiddleHeader">Gi&#225;</td>
+                                <td class="clsMiddleHeader">KL</td>
+                                <td class="clsMiddleHeader">Thời gian</td>
+                            </tr>
+                            </thead>
+                        </table>
+                    </div>
+                    <div class="item_odersdeal clsMiddleWidth">
+                        <div class="dv_wrap_tb">
+                            <table id="header_pt" class="item_sub" cellpadding="2" cellspacing="0">
+                                <thead>
+                                <tr>
+                                    <td colspan="5" class="clsMiddleHeader">Khớp lệnh</td>
+                                </tr>
+                                <tr>
+                                    <td class="clsMiddleHeader " id="col_dvm_A">Mã CK</td>
+                                    <td class="clsMiddleHeader">Gi&#225;</td>
+                                    <td class="clsMiddleHeader">KL</td>
+                                    <td class="clsMiddleHeader">Gi&#225; trị</td>
+                                    <td class="clsMiddleHeader">Thời gian</td>
+                                </tr>
+                                </thead>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="item_odersdeal">
+                        <table id="header_sell" class="item_sub" cellpadding="2" cellspacing="0">
+                            <thead>
+                            <tr>
+                                <td colspan="4" class="clsMiddleHeader">Ch&#224;o b&#225;n</td>
+                            </tr>
+                            <tr>
+                                <td class="clsMiddleHeader">Mã CK</td>
+                                <td class="clsMiddleHeader">Gi&#225;</td>
+                                <td class="clsMiddleHeader">KL</td>
+                                <td class="clsMiddleHeader">Thời gian</td>
+                            </tr>
+                            </thead>
+                        </table>
+                    </div>
+                </div>
+                <div id="content_odersdeal">
+                    <div id="dv_buy" class="item_odersdeal">
+                        <table id="tb_buy" cellpadding="2" cellspacing="0" class="item_main">
+                            <thead>
+                            <tr>
+                                <td colspan="4" class="clsMiddleHeader">Ch&#224;o mua</td>
+                            </tr>
+                            <tr>
+                                <td class="clsMiddleHeader clsSymbolPT">Mã CK</td>
+                                <td class="clsMiddleHeader clsSymbolPT">Gi&#225;</td>
+                                <td class="clsMiddleHeader">KL</td>
+                                <td class="clsMiddleHeader clsSymbolPT">Thời gian</td>
+                            </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                    <div id="dv_pt" class="item_odersdeal">
+                        <div class="dv_wrap_tb">
+                            <table id="tb_pt" cellpadding="2" cellspacing="0" class="item_main">
+                                <thead>
+                                <tr>
+                                    <td colspan="5" class="clsMiddleHeader">Khớp lệnh</td>
+                                </tr>
+                                <tr>
+                                    <td class="clsMiddleHeader clsSymbolPT" id="col_dvm_B">Mã CK</td>
+                                    <td class="clsMiddleHeader clsSymbolPT">Gi&#225;</td>
+                                    <td class="clsMiddleHeader">KL</td>
+                                    <td class="clsMiddleHeader">Gi&#225; trị</td>
+                                    <td class="clsMiddleHeader clsSymbolPT">Thời gian</td>
+                                </tr>
+                                </thead>
+                                <tbody></tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div id="dv_sell" class="item_odersdeal">
+                        <table id="tb_sell" cellpadding="2" cellspacing="0" class="item_main">
+                            <thead>
+                            <tr>
+                                <td colspan="4" class="clsMiddleHeader">Ch&#224;o b&#225;n</td>
+                            </tr>
+                            <tr>
+                                <td class="clsMiddleHeader clsSymbolPT">Mã CK</td>
+                                <td class="clsMiddleHeader clsSymbolPT">Gi&#225;</td>
+                                <td class="clsMiddleHeader">KL</td>
+                                <td class="clsMiddleHeader clsSymbolPT">Thời gian</td>
+                            </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="dv_deri_total" class="hidden_row dv-of-derivative dv-father">
+            <table id="total_header" class="table_bg cls-tbl-header" cellpadding="2" cellspacing="0">
+                <thead>
+                <tr>
+                    <td colspan="2" class="clsWidthQTTY">Khớp lệnh định kỳ mở cửa</td>
+                    <td colspan="2" class="clsWidthQTTY">Khớp lệnh li&#234;n tục</td>
+                    <td colspan="2" class="clsWidthQTTY">Khớp lệnh định kỳ đ&#243;ng cửa</td>
+                    <td colspan="2" class="clsWidthQTTY">Giao dịch thỏa thuận</td>
+                    <td colspan="3" class="clsWidthQTTY">Giao dịch to&#224;n thị trường</td>
+                </tr>
+                <tr>
+                    <td class="clsWidthQTTY">KLGD</td>
+                    <td class="clsWidthQTTY">GTGD</td>
+                    <td class="clsWidthQTTY">KLGD</td>
+                    <td class="clsWidthQTTY">GTGD</td>
+                    <td class="clsWidthQTTY">KLGD</td>
+                    <td class="clsWidthQTTY">GTGD</td>
+                    <td class="clsWidthQTTY">KLGD</td>
+                    <td class="clsWidthQTTY">GTGD</td>
+                    <td class="clsWidthQTTY">KLGD</td>
+                    <td class="clsWidthQTTY">GTGD</td>
+                    <td class="clsWidthQTTY">OI</td>
+                </tr>
+                </thead>
+
+            </table>
+            <div id="dv_total_body" class="dv-child">
+                <table id="total_body" class="table_bg tbl-main" cellpadding="2" cellspacing="0">
+                    <thead>
+                    <tr>
+                        <td colspan="2" class="clsWidthQTTY">Khớp lệnh định kỳ mở cửa</td>
+                        <td colspan="2" class="clsWidthQTTY">Khớp lệnh li&#234;n tục</td>
+                        <td colspan="2" class="clsWidthQTTY">Khớp lệnh định kỳ đ&#243;ng cửa</td>
+                        <td colspan="2" class="clsWidthQTTY">Giao dịch thỏa thuận</td>
+                        <td colspan="3" class="clsWidthQTTY">Giao dịch to&#224;n thị trường</td>
+                    </tr>
+                    <tr>
+                        <td class="clsWidthQTTY">KLGD</td>
+                        <td class="clsWidthQTTY">GTGD</td>
+                        <td class="clsWidthQTTY">KLGD</td>
+                        <td class="clsWidthQTTY">GTGD</td>
+                        <td class="clsWidthQTTY">KLGD</td>
+                        <td class="clsWidthQTTY">GTGD</td>
+                        <td class="clsWidthQTTY">KLGD</td>
+                        <td class="clsWidthQTTY">GTGD</td>
+                        <td class="clsWidthQTTY">KLGD</td>
+                        <td class="clsWidthQTTY">GTGD</td>
+                        <td class="clsWidthQTTY">OI</td>
+                    </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+        </div>
+
+        <div id="dv_deri_details" class="hidden_row dv-of-derivative dv-father">
+            <table id="tb_fix_contract" class="table_bg  tbl-main" cellpadding="2" cellspacing="0">
+                <thead>
+                <tr>
+                    <td class="">M&#227; HĐ</td>
+                </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+            <table id="details_header" class="table_bg cls-tbl-header" cellpadding="2" cellspacing="0">
+                <thead>
+                <tr>
+                    <td rowspan="2" class="clsWidthQTTY">M&#227; HĐ</td>
+                    <td rowspan="2" class="clsWidthQTTY">Tháng đáo hạn</td>
+                    <td rowspan="2" class="clsWidthQTTY">Giá TC</td>
+                    <td rowspan="2" class="clsWidthQTTY">Giá trần</td>
+                    <td rowspan="2" class="clsWidthQTTY">Giá sàn</td>
+                    <td colspan="6" class="clsWidthQTTY">Đặt mua</td>
+
+
+
+                    <td colspan="2" class="clsWidthPrice">Khớp lệnh</td>
+
+                    <td colspan="6" class="clsWidthPrice">Đặt b&#225;n</td>
+                    <td rowspan="2" class="clsWidthPrice">Thay đổi gi&#225;</td>
+                    <td rowspan="2" class="clsWidthPrice">Thay đổi gi&#225; (%)</td>
+                    <td rowspan="2" class="clsWidthQTTY">Tổng khớp</td>
+                    <td rowspan="2" class="clsWidthQTTY">Tổng thỏa thuận</td>
+                    <td rowspan="2" class="clsWidthPrice">Gi&#225; mở cửa</td>
+                    <td rowspan="2" class="clsWidthPrice">Gi&#225; cao nhất</td>
+                    <td rowspan="2" class="clsWidthPrice">Gi&#225; thấp nhất</td>
+                    <td rowspan="2" class="clsWidthPrice">Gi&#225; đ&#243;ng cửa</td>
+                    <td rowspan="2" class="clsWidthQTTY">KL mở (OI)</td>
+                    <td rowspan="2" class="clsWidthQTTY">Thay đổi OI (%)</td>
+                    <td rowspan="2" class="cls-stt">T&#236;nh trạng giao dịch của CK</td>
+                    <td rowspan="2" class="clsWidthQTTY">KL mua NN</td>
+                    <td rowspan="2" class="clsWidthQTTY">KL b&#225;n NN</td>
+                </tr>
+                <tr class="tr-nowrap">
+                    <td class="td_header clsWidthPrice">Gi&#225; 3</td>
+                    <td class="td_header clsWidthQTTY">KL3</td>
+                    <td class="td_header clsWidthPrice">Gi&#225; 2</td>
+                    <td class="td_header clsWidthQTTY">KL2</td>
+                    <td class="td_header clsWidthPrice">Gi&#225; 1</td>
+                    <td class="td_header clsWidthQTTY">KL1</td>
+
+                    <td class="td_header clsWidthPrice">Gi&#225;</td>
+                    <td class="td_header clsWidthPrice">KL</td>
+
+                    <td class="td_header clsWidthPrice">Gi&#225; 1</td>
+                    <td class="td_header clsWidthQTTY">KL1</td>
+                    <td class="td_header clsWidthPrice">Gi&#225; 2</td>
+                    <td class="td_header clsWidthQTTY">KL2</td>
+                    <td class="td_header clsWidthPrice">Gi&#225; 3</td>
+                    <td class="td_header clsWidthQTTY">KL3</td>
+                </tr>
+                </thead>
+            </table>
+            <div id="dv_details_body" class="dv-child">
+                <table id="tb_fix_symbol" class="table_bg tbl-main hidden_row" cellpadding="2" cellspacing="0">
+                    <thead>
+                    <tr>
+                        <td class="">M&#227; HĐ</td>
+                    </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+
+                <table id="details_body" class="table_bg tbl-main" cellpadding="2" cellspacing="0">
+                    <thead>
+                    <tr>
+                        <td rowspan="2" class="clsWidthQTTY">M&#227; HĐ</td>
+                        <td rowspan="2" class="clsWidthQTTY">Tháng đáo hạn</td>
+                        <td rowspan="2" class="clsWidthQTTY">Giá TC</td>
+                        <td rowspan="2" class="clsWidthQTTY">Giá trần</td>
+                        <td rowspan="2" class="clsWidthQTTY">Giá sàn</td>
+                        <td colspan="6" class="clsWidthQTTY">Đặt mua</td>
+
+
+                        <td colspan="2" class="clsWidthPrice">Khớp lệnh</td>
+
+                        <td colspan="6" class="clsWidthPrice">Đặt b&#225;n</td>
+                        <td rowspan="2" class="clsWidthPrice">Thay đổi gi&#225;</td>
+                        <td rowspan="2" class="clsWidthPrice">Thay đổi gi&#225; (%)</td>
+                        <td rowspan="2" class="clsWidthQTTY">Tổng khớp</td>
+                        <td rowspan="2" class="clsWidthQTTY">Tổng thỏa thuận</td>
+                        <td rowspan="2" class="clsWidthPrice">Gi&#225; mở cửa</td>
+                        <td rowspan="2" class="clsWidthPrice">Gi&#225; cao nhất</td>
+                        <td rowspan="2" class="clsWidthPrice">Gi&#225; thấp nhất</td>
+                        <td rowspan="2" class="clsWidthPrice">Gi&#225; đ&#243;ng cửa</td>
+                        <td rowspan="2" class="clsWidthQTTY">KL mở (OI)</td>
+                        <td rowspan="2" class="clsWidthQTTY">Thay đổi OI (%)</td>
+                        <td rowspan="2" class="cls-stt">T&#236;nh trạng giao dịch của CK</td>
+                        <td rowspan="2" class="clsWidthQTTY">KL mua NN</td>
+                        <td rowspan="2" class="clsWidthQTTY">KL b&#225;n NN</td>
+                    </tr>
+                    <tr class="tr-nowrap">
+                        <td class="td_header clsWidthPrice">Gi&#225; 3</td>
+                        <td class="td_header clsWidthQTTY">KL3</td>
+                        <td class="td_header clsWidthPrice">Gi&#225; 2</td>
+                        <td class="td_header clsWidthQTTY">KL2</td>
+                        <td class="td_header clsWidthPrice">Gi&#225; 1</td>
+                        <td class="td_header clsWidthQTTY">KL1</td>
+
+                        <td class="td_header clsWidthPrice">Gi&#225;</td>
+                        <td class="td_header clsWidthPrice">KL</td>
+
+                        <td class="td_header clsWidthPrice">Gi&#225; 1</td>
+                        <td class="td_header clsWidthQTTY">KL1</td>
+                        <td class="td_header clsWidthPrice">Gi&#225; 2</td>
+                        <td class="td_header clsWidthQTTY">KL2</td>
+                        <td class="td_header clsWidthPrice">Gi&#225; 3</td>
+                        <td class="td_header clsWidthQTTY">KL3</td>
+                    </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+        </div>
+
+        <p id="ft_normal" class="pfooter">
+            <span class="f-left infopop">Trạng thái giao dịch
+                <span>
+                    <span><span class="special">P</span> - Bình thường</span>
+                    <span><span class="special">LM</span> - CK không được GD trong ngày (Hạn chế GD)</span>
+                    <span><span class="special">S</span> - Ngừng giao dịch</span>
+                    <span><span class="special">N</span> - Niêm yết mới</span>
+                    <span><span class="special">X</span> - Sắp hủy niêm yết</span>
+                    <span><span class="special">H</span> - Tạm ngừng giao dịch</span>
+                    <span data-shinfo="not-bond"><span class="special">ST</span> - Giao dịch đặc biệt</span>
+                </span>
+            </span>
+            <span style="width: 20px; text-align: center; float: left;" class="f-left">|</span>
+            <span class="f-left infopop">Trạng thái THQ
+                <span>
+                    <span><span class="special">P</span> - Bình thường</span>
+                    <span><span class="special">D1</span> - Trả cổ tức bằng tiền</span>
+                    <span><span class="special">D2</span> - Trả cổ tức bằng CP/CP thưởng</span>
+                    <span><span class="special">D3</span> - Phát hành CP cho cổ đông hiện hữu</span>
+                    <span><span class="special">D4</span> - Trả cổ tức bằng CP/CP thưởng,Phát hành CP cho cổ đông hiện hữu</span>
+                    <span><span class="special">D5</span> - Trả cổ tức bằng tiền, Trả cổ tức bằng CP/ CP thưởng, Phát hành CP cho cổ đông hiện hữu</span>
+                    <span><span class="special">AL</span> - Niêm yết bổ sung</span>
+                    <span><span class="special">CD</span> - Giảm vốn</span>
+                    <span><span class="special">D8</span> - Trả cổ tức bằng tiền, Trả cổ tức bằng CP/ CP thưởng</span>
+                    <span><span class="special">D9</span> - Trả cổ tức bằng tiền, Phát hành CP cho cổ đông hiện hữu</span>
+                    <span><span class="special">CF</span> - Thay đổi tỉ lệ FF</span>
+                    <span><span class="special">SM</span> - Họp đại hội cổ đông</span>
+                </span>
+            </span>
+
+            <span class="f-right">
+                Đơn vị gi&#225;: 1.000 VNĐ
+                <span class="cl-split">.</span>
+                <span id="sp_unit_qtty">Đơn vị khối lượng: 1.000 CP</span>
+                <span id="sp_unit_qtty_1" class="hidden_row">Đơn vị khối lượng: 1 CP</span>
+            </span>
+        </p>
+
+        <p id="ft_bond" class="pfooter hidden_row">
+            <span class="f-left infopop">Trạng thái giao dịch
+                <span>
+                    <span><span class="special">P</span> - Bình thường</span>
+                    <span><span class="special">LM</span> - CK không được GD trong ngày (Hạn chế GD)</span>
+                    <span><span class="special">S</span> - Ngừng giao dịch</span>
+                    <span><span class="special">N</span> - Niêm yết mới</span>
+                    <span><span class="special">X</span> - Sắp hủy niêm yết</span>
+                    <span><span class="special">H</span> - Tạm ngừng giao dịch</span>
+                    <span data-shinfo="not-bond"><span class="special">ST</span> - Giao dịch đặc biệt</span>
+                </span>
+            </span>
+            <span style="width: 20px; text-align: center; float: left;" class="f-left">|</span>
+            <span class="f-left infopop">Trạng thái THQ
+                <span>
+                    <span><span class="special">P</span> - Bình thường</span>
+                    <span><span class="special">D1</span> - Trả cổ tức bằng tiền</span>
+                    <span><span class="special">D2</span> - Trả cổ tức bằng CP/CP thưởng</span>
+                    <span><span class="special">D3</span> - Phát hành CP cho cổ đông hiện hữu</span>
+                    <span><span class="special">D4</span> - Trả cổ tức bằng CP/CP thưởng,Phát hành CP cho cổ đông hiện hữu</span>
+                    <span><span class="special">D5</span> - Trả cổ tức bằng tiền, Trả cổ tức bằng CP/ CP thưởng, Phát hành CP cho cổ đông hiện hữu</span>
+                    <span><span class="special">AL</span> - Niêm yết bổ sung</span>
+                    <span><span class="special">CD</span> - Giảm vốn</span>
+                    <span><span class="special">D8</span> - Trả cổ tức bằng tiền, Trả cổ tức bằng CP/ CP thưởng</span>
+                    <span><span class="special">D9</span> - Trả cổ tức bằng tiền, Phát hành CP cho cổ đông hiện hữu</span>
+                    <span><span class="special">CF</span> - Thay đổi tỉ lệ FF</span>
+                    <span><span class="special">SM</span> - Họp đại hội cổ đông</span>
+                </span>
+            </span>
+
+            <span class="f-right">
+                Đơn vị gi&#225;: 1.000 VNĐ
+                <span class="cl-split">.</span>
+                <span id="bond_unit_qtty_1000">Đơn vị khối lượng: 1.000 TP</span>
+                <span id="bond_unit_qtty_1" class="hidden_row">Đơn vị khối lượng: 1 TP</span>
+            </span>
+        </p>
+
+        <p id="ft_derivative_total" class="pfooter hidden_row ft-deri">
+            <span class="f-right">Đơn vị khối lượng: 1 hợp đồng.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Đơn vị GTGD: 1 triệu VND</span>
+        </p>
+        <p id="ft_derivative_details" class="pfooter hidden_row ft-deri">
+            <span class="f-left">Tình trạng chứng khoán:<span class="special">N</span><span> - Bình thường</span><span class="special">H</span><span> - Tạm dừng giao dịch</span></span>
+            <span class="f-right">Đơn vị khối lượng: 1 hợp đồng</span>
+        </p>
+    </div>
+</div>
+
+<script src="/Scripts/PriceHNX.js?v=3.6"></script>
+<script>
+  $(document).ready(function () {
+    document.title = "HNX - BANG GIA";
+
+    $('#cboVotingType').multipleSelect({
+      width: '100%', filter: true, isdatastring: true, single: true
+    });
+
+    $.ajax({
+      url: '/Home/GetNameSuggest/',
+      type: 'POST',
+      data: {
+        isVi: $("#txtLanguage").val()
+      },
+      sync: true, cache: false, traditional: true,
+      success: function (data) {
+        var lts = data.lst;
+        $('#txtSearch').autocomplete({
+          source: function (request, response) {
+            var matcher = new RegExp("^" + $.ui.autocomplete.escapeRegex(request.term.toUpperCase()), "i");
+            response($.grep(lts, function (item) {
+              return matcher.test(item.value);
+            }));
+          },
+          select: function (event, ui) {
+            event.preventDefault();
+
+            AddFav(ui.item.value);
+          },
+          focus: function (event, ui) {
+            this.value = ui.item.value;
+            var arrResult = $("ul .ui-corner-all");
+            for (var i = 0; i < arrResult.length; i++) {
+              var label = $.trim($(arrResult[i]).text().split("-")[0]);
+              if (label == ui.item.value) {
+                $(".clsLiActive").removeClass("clsLiActive")
+                $(arrResult[i]).addClass("clsLiActive");
+                break;
+              }
+            }
+            event.preventDefault();
+          },
+          open: function (event, ui) {
+            $("ul").scrollTop(0);
+            event.preventDefault();
+          },
+
+        });
+
+      }
+    });
+
+    $.ui.autocomplete.prototype._renderItem = function (ul, item) {
+      var re = new RegExp("^" + this.term.toUpperCase());
+      var t = item.label.replace(re, "<span class='clsCheck'>" +
+        this.term.toUpperCase() +
+        "</span>");
+
+      return $("<li></li>")
+        .data("item.autocomplete", item)
+        .append("<a>" + t + "</a>")
+        .appendTo(ul);
+    };
+
+    GetDataChart();
+  });
+
+
+  // ngocdt sua 09/05/2017 hàm này cần Resource nên phải đẩy ra view (bỏ ở js)
+  function ChangeOrderDealInDerative(_isshow) {
+    var _code = "Mã HĐ";
+    if (_isshow == 'Y') {
+      _code = "Mã CK";
+      $('#col_dvm_A,#col_dvm_B').html(_code);
+      $('#dv_buy,#dv_sell').removeClass('no_visibility');
+      $('#header_buy').removeClass('no_visibility');
+      $('#header_sell').removeClass('no_visibility');
+      $('#ft_derivative_total').addClass(clsHidden);
+    } else {
+      $('#col_dvm_A,#col_dvm_B').html(_code);
+      $('#dv_buy,#dv_sell').addClass('no_visibility');
+      $('#header_buy').addClass('no_visibility');
+      $('#header_sell').addClass('no_visibility');
+      $('#ft_derivative_total').removeClass(clsHidden);
+    }
+  }
+
+</script>

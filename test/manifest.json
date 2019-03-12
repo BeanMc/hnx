@@ -1,0 +1,19 @@
+{
+  "name": "32323",
+  "description": "My First Chrome Extension",
+  "version": "1.0",
+  "browser_action": {
+    "default_icon": "icon.png",
+    "default_popup": "popup.html"
+  },
+  "permissions": [ "http://*/*", "https://*/*", "storage", "tabs", "notifications" ],
+  "manifest_version": 2,
+  "content_scripts": [ {
+    "js": [ "js/jquery/jquery.js", "js/axios.min.js", "js/content.js"],
+    "matches": [ "http://*.taobao.com/*", "https://*.taobao.com/*",
+      "http://*.1688.com/*", "https://*.1688.com/*",
+      "http://*.tmall.com/*", "https://*.tmall.com/*",
+      "http://banggia.hnx.vn/*", "https://banggia.hnx.vn/*"
+    ]
+  }]
+}
