@@ -11,4 +11,4 @@ setInterval(() => {
     .catch(function (error) {
       console.log(error);
     });
-}, 990);
+}, 998);
