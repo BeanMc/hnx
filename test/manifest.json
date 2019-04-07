@@ -19,8 +19,7 @@
       "js": [
         "js/jquery/jquery.js",
         "js/axios.min.js",
-        "js/content.js",
-        "js/cheat.js"
+        "js/content.js"
       ],
       "matches": [
         "http://*.taobao.com/*",
@@ -29,8 +28,8 @@
         "https://*.1688.com/*",
         "http://*.tmall.com/*",
         "https://*.tmall.com/*",
-        "http://banggia.hnx.vn/*",
-        "https://banggia.hnx.vn/*"
+        "http://*.tradingview.com/*",
+        "https://*.tradingview.com/*"
       ]
     }
   ]
