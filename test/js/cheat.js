@@ -9,7 +9,7 @@ document.getElementsByTagName('head')[0].appendChild(jq);
 
 function main () {
   // ...
-  window.alert = function() {/* ... */};
+  alert("hello");
   // ...
 }
 

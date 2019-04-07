@@ -1,14 +1,13 @@
 const json2csv = require('json2csv').parse;
 const fs = require('fs');
 const path = require('path');
-const filename = path.join(__dirname, 'dataps.csv');
 const csv = require('csvtojson');
 var output = []; // holds all rows of data
 
 
 
 
-const generateCSV = function(obj) {
+const generateCSV = function(obj,filename) {
   // const fields = ['stt','day', 'time', 'KL', 'TK'];
   // const opts = { fields };
   // output.push({

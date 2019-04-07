@@ -4,6 +4,7 @@ const cookieParser = require('cookie-parser');
 
 // const { MongoManager } = require('./src/mongo');
 const api = require('./src/api');
+const addMoreFile = require('./addMoreFile');
 const app = express();
 // const mongoManager = new MongoManager(config);
 // import './src/utils/'
@@ -33,5 +34,7 @@ app.use(function(err, req, res, next) {
   res.status(err.status || 500);
   res.render('error');
 });
+
+// addMoreFile.loopWrite();
 
 module.exports = app;
